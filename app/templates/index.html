@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomClip Scraper</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+<body style="margin: 0;">
+    <header
+        style="
+            display: flex;
+            justify-content: space-between;
+            padding-top: 8px;
+            background-color: #fff;
+            border-bottom: solid 1px #aaaaaa;
+        "
+    >
+        <h1>RoomClip なぁちゃん</h1>
+        <form action="/" method="GET">
+            <label for="tag_id">Tag ID:</label>
+            <input type="text" id="tag_id" name="tag_id" value="{{ tag_id }}" required>
+            <br>
+            <label for="tag_filter">Tag Filter:</label>
+            <input type="text" id="tag_filter" name="tag_filter" value="{{ tag_filter }}">
+            <br>
+            <button type="submit">Scrape</button>
+        </form>
+        <div>
+            <p>取得件数: {{ item_count }}</p>
+            <p>ユーザー数: {{ user_count }}</p>
+        </div>
+    </header>
+    <h2>Result:</h2>
+    {% for user_link, items in grouped_items.items() %}
+        <h3 style="background-color: #fff; position: sticky; top: 0; left: 0; right: 0;">
+            <img src="{{ items[0][4] }}" alt="" /><a href="{{ user_link }}">{{ items[0][3] }}</a><br>
+            <button onclick="toggleUser('{{ user_link }}')">表示・非表示</button>
+        </h3>
+        <ul class="userGroup" data-user="{{ user_link }}">
+            {% for url, image, tags, user_name, user_image, user_link in items %}
+                <li style="
+                    list-style: none;
+                    border: solid 1px #aaa;
+                    border-radius: 1em;
+                    display: inline-block;
+                    width: 300px;
+                    vertical-align: top;
+                    padding: 1em;
+                    margin-left: 10px;
+                    margin-right: 10px;
+                    margin-bottom: 1em;
+                ">
+                    <a href="{{ url }}">{{ url }}</a>
+                    <button onclick="copyToClipboard('{{ url }}')" style="margin-left: 1em">リンクコピー</button>
+                    <br>
+                    <img
+                        src="{{ image }}"
+                        alt=""
+                        width="200"
+                        height="200"
+                        style="
+                            object-fit: cover;
+                            border: solid 1px #ddd;
+                        "
+                    />
+                    <br>
+                    <strong>タグ一覧</strong>
+                    <ul>
+                        {% for tag in tags %}
+                            <li>{{ tag }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>

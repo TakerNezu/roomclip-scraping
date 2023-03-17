@@ -1,0 +1,10 @@
+services:
+  roomclip-scraping:
+    container_name: roomclip-scraping
+    image: python:3.9
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./app:/app
+    tty: true
+    stdin_open: true
