@@ -1,10 +1,32 @@
 services:
+
+  test-db:
+    container_name: test-db
+    image: mysql
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: roomclip-scraping
+
+  test-apache:
+    container_name: test-apache
+    image: httpd
+    volumes:
+      - ./roomclip-scraping:/roomclip-scraping
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - '5001:5001'
+
   roomclip-scraping:
     container_name: roomclip-scraping
-    image: python:3.9
-    ports:
-      - '5000:5000'
+    build: .
     volumes:
-      - ./app:/app
+      - ./roomclip-scraping:/roomclip-scraping
+    ports:
+      - '5002:5002'
+    working_dir: /roomclip-scraping
     tty: true
     stdin_open: true
+    depends_on:
+      - test-db
+      - test-apache
